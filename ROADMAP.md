@@ -12,15 +12,15 @@ Detailed task lists and acceptance tests are in `plan/execution-plan.md` (local-
 
 The unit is **wall-clock hours of agent work** (Claude Opus 5.5 coding continuously; human review time not included).
 
-**Where we are (2026-10-05, measured by `cargo xtask parity` over 804 tracked Acrobat Pro features; 23 more are Adobe-cloud-only and out of scope):**
+**Where we are (2026-10-07, measured by `cargo xtask parity` over 805 tracked Acrobat Pro features; 23 more are Adobe-cloud-only and out of scope):**
 
 | Tier | Features | Shipped | Partial | Shipped % | Weighted % (partial = ½) |
 |---|---|---|---|---|---|
-| P0 (must-have for 1.0) | 250 | 221 | 25 | 88.4% | 93.4% |
-| P1 | 325 | 168 | 33 | 51.7% | 56.8% |
-| P2 | 186 | 9 | 3 | 4.8% | 5.6% |
+| P0 (must-have for 1.0) | 251 | 222 | 25 | 88.4% | 93.4% |
+| P1 | 325 | 172 | 30 | 52.9% | 57.5% |
+| P2 | 186 | 10 | 2 | 5.4% | 5.9% |
 | P3 | 43 | 0 | 0 | 0% | 0% |
-| **All** | **804** | **398** | **61** | **49.5%** | **53.3%** |
+| **All** | **805** | **404** | **57** | **50.2%** | **53.7%** |
 
 **Effort-weighted parity: ≈ 30–35%.** Feature counts overstate progress: the remaining features include the hardest ones (our own renderer and font engine, editing existing text and reflow, OCR beyond Latin, XFA, PDF/A/X/UA preflight, Office export, long-term signature validation). Weighting each milestone by its estimated size gives about a third of the total work done. See **[Honest assessment](#honest-assessment-2026-10-05)** for what the numbers don't show.
 
@@ -40,30 +40,30 @@ Read this before choosing work. The feature table above counts what exists; this
 
 | Dimension | State | In one line |
 |---|---|---|
-| Feature count | 49.5% shipped (P0 88%, P1 52%, P2 5%, P3 0%) | A typical viewer, annotator, form-filler or page organizer is mostly covered |
+| Feature count | 50.2% shipped (P0 88%, P1 53%, P2 5%, P3 0%) | A typical viewer, annotator, form-filler or page organizer is mostly covered |
 | Effort | ≈ 30–35% | The remaining work is the hardest: M2 15%, M7 17%, M11 18%, M12 20%, M14 0% |
 | Foundations | Weakest | Rendering is still the bootstrap `hayro`; the inspector is `lopdf`; 18 vendored patches carried |
 | Robustness | Early beta | Each 15-minute fuzz run found new out-of-memory crashes or hangs until 2026-10-05 |
 | Acrobat fidelity | Unmeasured | No systematic side-by-side comparison with Acrobat, visual or behavioural |
-| Product readiness | 0.2.0 | No code signing, localization, performance budgets or keyboard-only operation yet |
+| Product readiness | 0.2.1 | No code signing, localization, performance budgets or keyboard-only operation yet |
 
 **By area** (shipped share of each area's features):
 
 | Area | Shipped | What's strong / what's missing |
 |---|---|---|
-| A Core | 73% | Parser, repair, encryption, incremental saves. Missing: lazy loading (`ByteSource`), own image codecs, PDF 2.0 extras, Arlington validation |
-| F Forms | 68% | Filling, authoring, AF scripts, sandboxed JavaScript, data exchange. Missing: XFA, wider JavaScript object model |
+| A Core | 75% | Parser, repair, encryption, incremental saves. Missing: lazy loading (`ByteSource`), own image codecs, PDF 2.0 extras, Arlington validation |
+| F Forms | 71% | Filling, authoring, AF scripts, sandboxed JavaScript, data exchange. Missing: XFA, wider JavaScript object model |
+| E Comments | 63% | All markup types with appearances, XFDF/FDF, summaries. Missing: replace-text proposals, summary layouts |
 | M Accessibility | 62% | Checker (all 32 rules). Missing: autotag, Tags/Order/Content panels, Reading Order tool, keyboard-only operation |
+| B View | 55% | Shell, find, panels, tiles, web build. **Rendering is borrowed (`hayro`)**, so the 7 rendering P0s are only partial |
 | D Organize | 55% | Pages, combine, split, bookmarks, labels. Missing: replace pages, transitions |
-| E Comments | 55% | All markup types with appearances, XFDF/FDF, summaries. Missing: replace-text proposals, summary layouts |
-| B View | 54% | Shell, find, panels, tiles, web build. **Rendering is borrowed (`hayro`)**, so the 7 rendering P0s are only partial |
-| G Protect | 52% | Passwords, permissions, redaction, sanitize. Missing: certificate security, redaction codes |
-| H Sign | 45% | PAdES B-B signing and validation. Missing: timestamps (B-T), LTV (DSS/OCSP/CRL), FieldMDP, Windows store, PKCS #11 |
-| C Edit | 44% | Added text and images stay editable; header/footer/watermark. Missing: robust editing of existing text and images (fonts, subsets, reflow) |
+| G Protect | 54% | Passwords, permissions, redaction, sanitize. Missing: certificate security, redaction codes |
+| H Sign | 48% | PAdES B-B signing and validation. Missing: timestamps (B-T), LTV (DSS/OCSP/CRL), FieldMDP, Windows store, PKCS #11 |
+| C Edit | 46% | Added text and images stay editable; header/footer/watermark. Missing: robust editing of existing text and images (fonts, subsets, reflow) |
 | L Print | 36% | Acrobat-style sizing, n-up, booklet, CUPS. Missing: Windows and web printing, production options |
-| J Create | 31% | From images, text, clipboard; Word/HTML/RTF export. Missing: Office import, Excel/PowerPoint export |
+| J Create | 32% | From images, text, clipboard; Word/HTML/RTF export. Missing: Office import, Excel/PowerPoint export |
+| N Misc | 27% | CLI, MCP, UI control channel, Action Wizard. Missing: AI providers, performance budgets |
 | K Optimize | 26% | Reduce File Size, Optimizer. Missing: preflight, PDF/X/UA, transparency/fonts panels |
-| N Misc | 24% | CLI, MCP, UI control channel, Action Wizard. Missing: AI providers, performance budgets |
 | I OCR | 19% | Searchable image for Latin script. Missing: other scripts and accents, editable-text output, deskew |
 
 **What "shipped" means, and doesn't.** A feature is shipped when it exists and at least one specific test covers it. 159 of 398 shipped features rest on exactly one test, and only about 5 cite an external oracle (`pdftotext`, `pdfsig`, OpenSSL, a corpus). Shipped does not mean "as good as Acrobat".
@@ -127,6 +127,7 @@ M0 → M1 → M2 → M3 → M4 must happen in order. After M4, M5–M12 can run 
 
 Newest first. One line per session: the date, what moved, and the new overall percentage.
 
+- **2026-10-07 (session 15):** Five community issues, each with a regression test: in two-page view, Next page moves a whole spread (#77, #70); Export to Word opens in Word again, with control characters dropped and receipt-length pages kept within Word's 22 in, checked in Microsoft Word (#78, #72); macOS opens PDFs from Finder, Open With and the Dock (Apple events through the audited `fmv-macos-events`, PDF declared in the Info.plist), and the packaging no longer describes the image editor it was copied from (#82, #73); Add text keeps the box being typed when you click elsewhere, with Done and Discard beside it, reproduced and checked with real OS input (#86, #74); sharper, higher-contrast text, most visible on Windows, with every text colour at WCAG AA in both themes (#84, #76; the console window was already gone in 0.2.1). Still open: #79 (layered "not verified" signature appearances), #80 (native macOS menu bar), #81 (Homebrew and Scoop). P0 88%, P1 53%; 805 features 50.2% shipped (53.7% weighted). ≈ 30–35%.
 - **2026-10-06 (session 14):** Issues: move and resize existing text boxes in Edit text (#59, closes #40); Windows release builds open no console window and the Start Menu shortcut has its icon (#58, #57; rolled out to every Craft app); native Windows ARM64 installers, installed and run on an ARM64 runner in CI (#66, #71; the intermittent ARM64 test crash was a WARP shader-JIT race between parallel GPU-rendering tests, not our code); XFA forms are detected and explained instead of failing silently (#65, #60 stays open for real XFA). Also: squiggly underline tool, comment opacity, Preferences ▸ Identity, drag-and-drop/hover tests; community table export to Word/HTML/RTF (#62, with linear-time detection and a column cap). #63 (timestamps/LTV with outbound network) held for review fixes and an owner decision on network access. ≈ 30–35% (unchanged).
 - **2026-10-05 (session 13, later):** FreeBSD: CI builds and tests the workspace in a FreeBSD 14.3 VM (#45) and the release ships a FreeBSD x86_64 tarball, checked in CI (#42); README lists FreeBSD. Fuzzing: the nightly job's 11 hangs fixed (#41: our parser's exponential retries, inline images, Type 3 fan-out), plus a JBIG2 hang (#43, vendored hayro-jbig2) and a Type 1 font stack overflow (#46, skrifa 0.47); a full run now finds 0 crashes. Landed community PRs #36 (text editing, Japanese replacements), #47 (English/Japanese interface) and #48 (XFDF colour crash). Windows launch crash with Intel's Vulkan driver fixed by using Direct3D 12 (#49, issue #37); one copy of the Japanese font instead of two (#51, −8.3 MB); full screen and About get real tests (#50). P0 88%, P1 52%. ≈ 30–35%.
 - **2026-10-05 (community, #47):** Interface language: Preferences ▸ Interface language switches English/Japanese and persists (`ui.set language=ja|en`, reported by `ui.state`). Core menu labels are translated; dialogs, panels and more languages remain open (misc.prefs-language: partial).
