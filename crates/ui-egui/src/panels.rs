@@ -171,16 +171,19 @@ fn tool_detail(app: &mut PrintCraftApp, ui: &mut egui::Ui, t: &Tokens, g: &'stat
                     if ready { hue(g) } else { t.text_faint },
                 );
                 ui.painter().text(rect.left_center() + vec2(34.0, 0.0), Align2::LEFT_CENTER, item.label, theme::regular(13.0), fg);
-                let (chip, fill, cfg) = match item.availability {
-                    Availability::Ready => ("Ready", Color32::from_rgb(0xDD, 0xF3, 0xE4), Color32::from_rgb(0x1E, 0x7B, 0x43)),
-                    Availability::Planned(m) => (m, t.pressed, t.text_muted),
-                    Availability::Provider => ("AI", t.pressed, t.text_muted),
+                // Planned items get no chip: their muted text says it, and clicking explains when.
+                let chip = match item.availability {
+                    Availability::Ready => Some(("Ready", Color32::from_rgb(0xDD, 0xF3, 0xE4), Color32::from_rgb(0x1E, 0x7B, 0x43))),
+                    Availability::Planned(_) => None,
+                    Availability::Provider => Some(("AI", t.pressed, t.text_muted)),
                 };
-                let font = theme::semibold(9.5);
-                let w = ui.fonts_mut(|f| f.layout_no_wrap(chip.to_string(), font.clone(), cfg).size().x);
-                let r = Rect::from_center_size(rect.right_center() - vec2(w / 2.0 + 10.0, 0.0), vec2(w + 10.0, 16.0));
-                ui.painter().rect_filled(r, CornerRadius::same(4), fill);
-                ui.painter().text(r.center(), Align2::CENTER_CENTER, chip, font, cfg);
+                if let Some((chip, fill, cfg)) = chip {
+                    let font = theme::semibold(9.5);
+                    let w = ui.fonts_mut(|f| f.layout_no_wrap(chip.to_string(), font.clone(), cfg).size().x);
+                    let r = Rect::from_center_size(rect.right_center() - vec2(w / 2.0 + 10.0, 0.0), vec2(w + 10.0, 16.0));
+                    ui.painter().rect_filled(r, CornerRadius::same(4), fill);
+                    ui.painter().text(r.center(), Align2::CENTER_CENTER, chip, font, cfg);
+                }
                 if resp.on_hover_text(item.command).clicked() {
                     run = Some(item.command);
                 }
