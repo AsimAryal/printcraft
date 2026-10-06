@@ -1,5 +1,5 @@
-//! Community links: the Discord button is one click away everywhere; Help menu, About dialog and
-//! home screen open the ArtCraft and PrintCraft pages.
+//! Community links: Help menu, About dialog and home screen open Discord and the ArtCraft and
+//! PrintCraft pages. The top bar stays clean (no Discord button).
 
 use egui_kittest::Harness;
 use egui_kittest::kittest::Queryable;
@@ -17,11 +17,9 @@ fn harness(setup: impl FnOnce(&mut PrintCraftApp) + 'static) -> Harness<'static,
 }
 
 #[test]
-fn discord_button_in_the_top_bar_opens_discord() {
-    let mut h = harness(|_| {});
-    h.get_by_label("Discord").click();
-    h.run_steps(2);
-    assert_eq!(h.state().last_opened_url.as_deref(), Some(links::DISCORD));
+fn top_bar_has_no_discord_button() {
+    let h = harness(|_| {});
+    assert_eq!(h.query_all_by_label("Discord").count(), 0);
     assert_eq!(links::DISCORD, "https://discord.gg/artcraft");
 }
 
