@@ -72,6 +72,12 @@ pub fn menu_item(ui: &mut egui::Ui, label: &str, shortcut: &str) -> Response {
     ui.add(egui::Button::new(label).shortcut_text(shortcut))
 }
 
+/// Clickable text (a link or a toggle): not selectable, and shows a pointing hand on hover rather
+/// than the text I-beam, so it reads as something to click.
+pub fn link_label(ui: &mut egui::Ui, text: impl Into<egui::WidgetText>) -> Response {
+    ui.add(egui::Label::new(text).selectable(false).sense(Sense::click())).on_hover_cursor(egui::CursorIcon::PointingHand)
+}
+
 pub fn section_title(ui: &mut egui::Ui, text: &str) {
     let t = Tokens::get(ui.ctx());
     ui.add_space(10.0);

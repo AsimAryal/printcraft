@@ -201,7 +201,7 @@ pub(crate) fn panel(ui: &mut egui::Ui, t: &Tokens, state: &mut A11yState, doc: D
                     icons::button(ui, if open { "chevron-down" } else { "chevron-right" }, 20.0, false, if open { "Collapse" } else { "Expand" })
                         .clicked();
                 let color = if issues > 0 { FAILED } else { t.text };
-                let l = ui.add(egui::Label::new(egui::RichText::new(&head).font(theme::semibold(13.0)).color(color)).sense(egui::Sense::click()));
+                let l = widgets::link_label(ui, egui::RichText::new(&head).font(theme::semibold(13.0)).color(color));
                 toggle || l.clicked()
             })
             .inner;
@@ -221,11 +221,9 @@ pub(crate) fn panel(ui: &mut egui::Ui, t: &Tokens, state: &mut A11yState, doc: D
                 .horizontal(|ui| {
                     ui.add_space(24.0);
                     ui.add(icons::image(icon, 15.0, color));
-                    ui.add(
-                        egui::Label::new(
-                            egui::RichText::new(format!("{} - {}", r.rule.name(), r.status.label())).font(theme::regular(12.5)).color(t.text),
-                        )
-                        .sense(egui::Sense::click()),
+                    widgets::link_label(
+                        ui,
+                        egui::RichText::new(format!("{} - {}", r.rule.name(), r.status.label())).font(theme::regular(12.5)).color(t.text),
                     )
                 })
                 .inner;
@@ -269,11 +267,16 @@ pub(crate) fn panel(ui: &mut egui::Ui, t: &Tokens, state: &mut A11yState, doc: D
                 egui::Frame::NONE.inner_margin(egui::Margin { left: 46, right: 4, top: 0, bottom: 6 }).show(ui, |ui| {
                     ui.spacing_mut().item_spacing.y = 2.0;
                     for f in &r.findings {
-                        let l = ui.add(egui::Label::new(egui::RichText::new(&f.message).small().color(t.text_muted)).sense(egui::Sense::click()));
-                        if let Some(p) = f.page
-                            && l.on_hover_text("Go to the page").clicked()
-                        {
-                            action = Some(PanelAction::GoTo(p));
+                        let text = egui::RichText::new(&f.message).small().color(t.text_muted);
+                        match f.page {
+                            Some(p) => {
+                                if widgets::link_label(ui, text).on_hover_text("Go to the page").clicked() {
+                                    action = Some(PanelAction::GoTo(p));
+                                }
+                            }
+                            None => {
+                                ui.label(text);
+                            }
                         }
                     }
                 });

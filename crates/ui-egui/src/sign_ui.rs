@@ -743,7 +743,7 @@ pub(crate) fn panel(ui: &mut egui::Ui, t: &Tokens, sigs: &[SignatureInfo], expan
                 let chevron = if open { "chevron-down" } else { "chevron-right" };
                 let toggle = icons::button(ui, chevron, 20.0, false, if open { "Collapse" } else { "Expand" }).clicked();
                 ui.add(icons::image(icon, 16.0, color));
-                let l = ui.add(egui::Label::new(egui::RichText::new(&head).font(theme::semibold(12.5)).color(t.text)).sense(egui::Sense::click()));
+                let l = widgets::link_label(ui, egui::RichText::new(&head).font(theme::semibold(12.5)).color(t.text));
                 toggle || l.clicked()
             })
             .inner;
