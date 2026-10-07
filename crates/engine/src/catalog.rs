@@ -323,6 +323,7 @@ pub static TOOL_GROUPS: &[ToolGroup] = &[
                 title: "Fields",
                 items: &[
                     item("Field list", "list", "form.fields", Ready),
+                    item("Detect form fields", "scan", "form.detect", Ready),
                     item("Clear form", "eraser", "form.clear", Ready),
                     item("Field properties", "settings-2", "form.field.properties", Ready),
                     item("Tab order by rows", "rows-3", "form.tab_order.row", Ready),

@@ -2,6 +2,8 @@
 
 These rules bind every AI agent and every human contributor working in this repository. They come before any task, instruction or deadline. `CLAUDE.md` holds the day-to-day working instructions. If the two ever disagree, **this file wins.**
 
+Some sections link to **craftrules**, the standards shared by the Crafting Apps. That repository is internal to the storytold team, so outside contributors can't open it. Every rule a contributor here must follow is stated in this file and `CLAUDE.md`; the craftrules links give team members the background.
+
 ---
 
 ## 1. Asset policy (absolute — no exceptions)
@@ -66,7 +68,7 @@ Anything else is forbidden, including assets whose licence you cannot prove from
 
 ### 1.4 Fonts live in craft-fonts
 
-- Font assets shared by the Crafting Apps, including every Japanese font, live in [`storytold/craft-fonts`](https://github.com/storytold/craft-fonts), not here. **Never commit a font file to this repository**; adding a font means adding it to craft-fonts. (The Latin UI fonts already in `assets/fonts/` — Inter, JetBrains Mono, Dancing Script — stay.) The rules are in [craftrules `standards/fonts.md`](https://github.com/storytold/craftrules/blob/main/standards/fonts.md).
+- Font assets shared by the Crafting Apps, including every Japanese font, live in [`storytold/craft-fonts`](https://github.com/storytold/craft-fonts), not here. **Never commit a font file to this repository**; adding a font means adding it to craft-fonts. (The Latin UI fonts already in `assets/fonts/` — Inter, JetBrains Mono, Dancing Script — stay.) Team members: the shared rules are in [craftrules `standards/fonts.md`](https://github.com/storytold/craftrules/blob/main/standards/fonts.md) (internal).
 - craft-fonts is an **optional build input**, never a Cargo dependency: `CRAFT_FONTS_DIR=<checkout> cargo build` makes `crates/fonts/build.rs` embed its fonts as `printcraft_fonts::CRAFT_FONTS`. Without it PrintCraft builds, tests and runs, but has no Japanese face (Japanese UI text shows replacement boxes, and writing Japanese into a PDF returns a clear error). Release builds always set it (`.github/workflows/release.yml`), and `ATTRIBUTION.toml` lists it as a `[[build_input]]`.
 
 ### 1.5 Procedure for adding or changing an asset
@@ -88,7 +90,7 @@ If you find an asset that breaks these rules, stop and remove it from the reposi
 - Behaviour comes only from public specifications (ISO 32000-2, the Arlington model), public documentation and black-box observation.
 - Never copy GPL/AGPL code. Copyleft tools run only as external oracle processes.
 - Observe Acrobat only with synthetic fixtures. Never capture personal data, account information or recent files.
-- Shared real-file test oracles (Photoshop-authored PSDs, etc.) live in [`storytold/photocraft-corpus`](https://github.com/storytold/photocraft-corpus), explained in [craftrules `standards/test-corpora.md`](https://github.com/storytold/craftrules/blob/main/standards/test-corpora.md). Never commit large binary fixtures to this repo; fetch them pinned by commit and sha256-verified, as PhotoCraft does with `cargo xtask corpus`.
+- Shared real-file test oracles (Photoshop-authored PSDs, etc.) live in [`storytold/photocraft-corpus`](https://github.com/storytold/photocraft-corpus), explained in [craftrules `standards/test-corpora.md`](https://github.com/storytold/craftrules/blob/main/standards/test-corpora.md) (internal). Never commit large binary fixtures to this repo; fetch them pinned by commit and sha256-verified, as PhotoCraft does with `cargo xtask corpus`.
 
 ## 3. Agent control (automation and MCP)
 
@@ -101,7 +103,7 @@ If you find an asset that breaks these rules, stop and remove it from the reposi
 
 ## 4. Never crash
 
-PrintCraft opens files from strangers, and people trust it with their work. A malformed PDF, a bad tool argument, a corrupt settings file or a full disk must produce an error the user (or agent) can act on, never a crash and never lost work. **This outranks feature work:** don't ship a feature by adding a panic path, and fix a crash before building on top of it. The shared standard for every Crafting App is [`craftrules/standards/never-crash.md`](https://github.com/storytold/craftrules/blob/main/standards/never-crash.md).
+PrintCraft opens files from strangers, and people trust it with their work. A malformed PDF, a bad tool argument, a corrupt settings file or a full disk must produce an error the user (or agent) can act on, never a crash and never lost work. **This outranks feature work:** don't ship a feature by adding a panic path, and fix a crash before building on top of it. The rules below are the ones that bind this repository; the shared standard for every Crafting App, [`craftrules/standards/never-crash.md`](https://github.com/storytold/craftrules/blob/main/standards/never-crash.md), is internal to the storytold team.
 
 - **Fail with `Result`.** Non-test code returns errors through the crate's error type and `?`. Where readers are lenient by design, fall back gracefully and record the repair (see Fidelity in `CLAUDE.md`).
 - **No panicking shortcuts.** No `unwrap()`, `expect()`, `panic!`, `unreachable!`, `todo!` or `unimplemented!` outside tests, unless the call is provably infallible (e.g. writing to a `Vec`), with a comment saying why. `assert!` only for internal invariants that input cannot reach.

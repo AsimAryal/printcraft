@@ -4,8 +4,9 @@
 
     wix build printcraft.wxs -arch x64 -d Version=1.2.3 -d BinDir=... -d IconPath=... -o out.msi
 
-  Per-machine install into Program Files, a Start Menu shortcut and an App Paths entry. Files
-  opened with PrintCraft arrive on its command line.
+  Per-machine install into Program Files, a Start Menu shortcut, an App Paths entry, and PrintCraft
+  registered as a PDF handler (offered under "Open with" and in Default apps, never forced as the
+  default). Files opened with PrintCraft arrive on its command line.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package
@@ -51,6 +52,25 @@
         </File>
 
         <RegistryValue Root="HKLM" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\printcraft.exe" Value="[#PrintcraftExe]" Type="string" />
+
+        <!-- PDF files (#107): PrintCraft is offered under "Open with" and in Settings ▸ Default
+             apps, through Windows' Default Programs registration (a ProgID, OpenWithProgids,
+             Capabilities and RegisteredApplications). It never takes over an existing default:
+             .pdf's own default value is left alone, and the user chooses. Without this, the only
+             PrintCraft entry to pick was the advertised Start Menu shortcut, which Windows can't
+             run as a file handler ("This app can't run on your PC"). -->
+        <RegistryValue Root="HKLM" Key="Software\Classes\PrintCraft.Document" Value="PDF Document" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\PrintCraft.Document\DefaultIcon" Value="[#PrintcraftExe],0" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\PrintCraft.Document\shell\open\command" Value="&quot;[#PrintcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\.pdf\OpenWithProgids" Name="PrintCraft.Document" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\printcraft.exe" Name="FriendlyAppName" Value="PrintCraft" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\printcraft.exe\SupportedTypes" Name=".pdf" Value="" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\Classes\Applications\printcraft.exe\shell\open\command" Value="&quot;[#PrintcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\PrintCraft\Capabilities" Name="ApplicationName" Value="PrintCraft" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\PrintCraft\Capabilities" Name="ApplicationDescription" Value="Open-source PDF workbench" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\PrintCraft\Capabilities" Name="ApplicationIcon" Value="[#PrintcraftExe],0" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\PrintCraft\Capabilities\FileAssociations" Name=".pdf" Value="PrintCraft.Document" Type="string" />
+        <RegistryValue Root="HKLM" Key="Software\RegisteredApplications" Name="PrintCraft" Value="Software\PrintCraft\Capabilities" Type="string" />
       </Component>
 
       <Component Id="PrintcraftCli">

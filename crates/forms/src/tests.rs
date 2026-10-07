@@ -524,6 +524,58 @@ fn options_tab_flags_alignment_and_defaults() {
 }
 
 #[test]
+fn check_box_styles_change_the_mark() {
+    // #94: Field Properties ▸ Options ▸ Check Box Style (stored as /MK /CA).
+    let mut doc = one_page();
+    let check = add_field(&mut doc, 0, [50.0, 700.0, 70.0, 720.0], &NewField::CheckBox, None).unwrap();
+    let radio = add_field(&mut doc, 0, [50.0, 600.0, 70.0, 620.0], &NewField::Radio { group: None, export: "A".into() }, None).unwrap();
+    let text = add_field(&mut doc, 0, [50.0, 500.0, 250.0, 520.0], &NewField::Text { multiline: false }, None).unwrap();
+    let style = |doc: &Document, name: &str| check_style(doc, field(&fields(doc), name));
+    assert_eq!((style(&doc, &check), style(&doc, &radio)), (CheckStyle::Check, CheckStyle::Circle), "the defaults");
+    // The "on" appearance: the widget's /AP /N entry for its on state.
+    let on_ap = |doc: &Document, name: &str| {
+        let all = fields(doc);
+        let w = &field(&all, name).widgets[0];
+        let on = w.on_state.clone().unwrap();
+        let n = doc
+            .get(w.obj)
+            .as_dict()
+            .unwrap()
+            .get(b"AP")
+            .unwrap()
+            .as_dict()
+            .unwrap()
+            .get(b"N")
+            .unwrap()
+            .as_dict()
+            .unwrap()
+            .reference(on.as_bytes())
+            .unwrap();
+        let Object::Stream(s) = &*doc.get(n) else { panic!() };
+        String::from_utf8_lossy(&s.decoded().unwrap()).into_owned()
+    };
+    let before = on_ap(&doc, &check);
+    for (s, code) in
+        [(CheckStyle::Cross, "8"), (CheckStyle::Square, "n"), (CheckStyle::Star, "H"), (CheckStyle::Diamond, "u"), (CheckStyle::Circle, "l")]
+    {
+        set_props(&mut doc, &check, &FieldProps { check_style: Some(s), ..FieldProps::default() }).unwrap();
+        let doc2 = reopen(&doc);
+        assert_eq!(style(&doc2, &check), s, "saved and read back");
+        let mk = doc2.get(field(&fields(&doc2), &check).widgets[0].obj).as_dict().unwrap().get(b"MK").unwrap().as_dict().cloned().unwrap();
+        assert_eq!(mk.get(b"CA").and_then(|c| c.as_string()).map(|c| c.to_text()).as_deref(), Some(code));
+        assert!(mk.get(b"BC").is_some(), "the border colour is kept");
+        assert_ne!(on_ap(&doc, &check), before, "{s:?} draws a different mark");
+    }
+    assert!(on_ap(&doc, &check).contains(" c f"), "a circle is a filled curve");
+    set_props(&mut doc, &radio, &FieldProps { check_style: Some(CheckStyle::Square), ..FieldProps::default() }).unwrap();
+    assert!(on_ap(&doc, &radio).contains(" re f"), "a square");
+    assert!(
+        set_props(&mut doc, &text, &FieldProps { check_style: Some(CheckStyle::Star), ..FieldProps::default() }).is_err(),
+        "text fields have no style"
+    );
+}
+
+#[test]
 fn ordering_tabs_manually() {
     let mut doc = one_page();
     let text = NewField::Text { multiline: false };

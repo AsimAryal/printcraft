@@ -5,7 +5,7 @@
 #   ROOT                    workspace root
 #   VERSION                 [workspace.package] version from Cargo.toml (override: PRINTCRAFT_VERSION)
 #   DIST                    output directory for release artifacts (default: $ROOT/dist/release)
-#   PRINTCRAFT_BUILD_SHA    git commit baked into the binaries (see crates/engine/src/build_info.rs)
+#   PRINTCRAFT_BUILD_SHA    git commit, recorded in the macOS Info.plist (PrintCraftBuildCommit)
 #   PRINTCRAFT_BUILD_DATE   UTC build date, YYYY-MM-DD
 #   CARGO_TARGET_DIR        cargo's target dir (default: $ROOT/target)
 

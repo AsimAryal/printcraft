@@ -823,6 +823,12 @@ fn preparing_a_form_through_tools() {
     assert_eq!((f[0]["required"].as_bool(), f[0]["tooltip"].as_str()), (Some(true), Some("Your name")));
     assert_eq!(f[0]["rect"], json!([30.0, 20.0, 190.0, 42.0]), "moved; the rect round-trips in view coordinates");
     assert_eq!(f[1]["options"], json!(["S", "L"]));
+    // #94: the mark a check box or radio button shows.
+    assert_eq!(f[1]["check_style"], "circle", "radio buttons default to a circle");
+    ok(&mut a, "form_set_props", json!({ "doc": doc, "field": "size", "check_style": "star" }));
+    assert_eq!(ok(&mut a, "form_fields", json!({ "doc": doc }))["fields"][1]["check_style"], "star");
+    assert!(matches!(a.call("form_set_props", &json!({ "doc": doc, "field": "size", "check_style": "heart" })), Err(ToolError::InvalidArgs(_))));
+    assert!(matches!(a.call("form_set_props", &json!({ "doc": doc, "field": "full name", "check_style": "star" })), Err(ToolError::Failed(_))));
     ok(&mut a, "form_fill", json!({ "doc": doc, "values": { "full name": "Ada", "size": "L" } }));
     assert!(page_text(&mut a, doc)[0].contains("Ada"));
     // Options tab: alignment, default, flags (comb needs a limit).

@@ -32,8 +32,8 @@ pub use printcraft_edit::{
     Added, AddedImage, AddedText, Align as TextAlign, Background, Content as AddedContent, Family as FontFamily, HeaderFooter, MarkKind, Watermark,
 };
 pub use printcraft_forms::{
-    BorderStyle, Field as FormField, FieldAction, FieldFont, FieldKind as FormFieldKind, FieldProps, FieldValue, Look as FieldLook, NewField,
-    TabOrder, Trigger as FieldTrigger, Widget as FormWidget, af as form_scripts, flags as field_flags,
+    BorderStyle, CheckStyle, Field as FormField, FieldAction, FieldFont, FieldKind as FormFieldKind, FieldProps, FieldValue, Look as FieldLook,
+    NewField, TabOrder, Trigger as FieldTrigger, Widget as FormWidget, af as form_scripts, flags as field_flags,
 };
 
 pub use printcraft_a11y as a11y;
@@ -384,6 +384,13 @@ impl Document {
         let e = self.editor.as_ref()?;
         let f = self.form.iter().find(|f| f.name == name)?;
         Some(printcraft_forms::look(&e.cos, f))
+    }
+
+    /// A check box's or radio button's mark (Field Properties ▸ Options), `None` for other fields.
+    pub fn field_check_style(&self, name: &str) -> Option<CheckStyle> {
+        let e = self.editor.as_ref()?;
+        let f = self.form.iter().find(|f| f.name == name)?;
+        matches!(f.kind, FormFieldKind::CheckBox | FormFieldKind::Radio).then(|| printcraft_forms::check_style(&e.cos, f))
     }
 
     /// Remove Hidden Information: what each category would remove.

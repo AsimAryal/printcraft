@@ -23,6 +23,6 @@ set). Without that variable `CRAFT_FONTS` is empty and everything below copes:
 - `SHIPPORI_MINCHO`: Shippori Mincho's bytes, or `None`.
 
 wasm32 builds embed only BIZ UDPGothic Regular, to keep the web build small. Font files are never
-committed here: see [craftrules `standards/fonts.md`](https://github.com/storytold/craftrules/blob/main/standards/fonts.md).
+committed here (`AGENTS.md` §1.4; team members: [craftrules `standards/fonts.md`](https://github.com/storytold/craftrules/blob/main/standards/fonts.md), internal).
 
 The full font subsystem (parsing, shaping, subsetting and embedding) arrives with M2.2/M7.

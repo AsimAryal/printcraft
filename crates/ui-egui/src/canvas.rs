@@ -1485,9 +1485,9 @@ pub fn document_area(app: &mut PrintCraftApp, index: usize, ui: &mut egui::Ui) {
                     ui.close();
                 }
                 ui.separator();
-                if ui.add_enabled(can_modify, egui::Button::new("Delete")).clicked() {
-                    view.prepare.selected = None;
-                    view.pending_edit = Some(printcraft_engine::Edit::DeleteField { name });
+                let delete = if view.prepare.also.is_empty() { "Delete" } else { "Delete selected fields" };
+                if ui.add_enabled(can_modify, egui::Button::new(delete)).clicked() {
+                    view.pending_edit = crate::prepare::delete_selected(view);
                     ui.close();
                 }
                 return;

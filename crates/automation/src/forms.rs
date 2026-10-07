@@ -201,6 +201,9 @@ impl Automation {
                 if let Some(t) = &f.tooltip {
                     o.insert("tooltip".into(), json!(t));
                 }
+                if let Some(s) = doc.field_check_style(&f.name) {
+                    o.insert("check_style".into(), json!(s.label().to_lowercase()));
+                }
                 if f.actions.format != Format::None {
                     o.insert("format".into(), format_json(&f.actions.format));
                     o.insert("display".into(), json!(f.value.first().map(|v| printcraft_engine::form_scripts::format_value(&f.actions.format, v))));
@@ -391,6 +394,15 @@ impl Automation {
                 }
             },
             actions: None,
+            check_style: match a.opt_str("check_style")? {
+                None => None,
+                Some(s) => Some(
+                    printcraft_engine::CheckStyle::ALL
+                        .into_iter()
+                        .find(|c| c.label().eq_ignore_ascii_case(s))
+                        .ok_or_else(|| bad(format!("unknown check style {s:?} (check, circle, cross, diamond, square, star)")))?,
+                ),
+            },
         };
         if props == FieldProps::default() {
             return Err(ToolError::InvalidArgs("nothing to change".into()));

@@ -4650,8 +4650,8 @@ milestone = "M6"
 status = "shipped"
 commands = ["form.prepare"]
 tools = ["form_add_field", "form_set_props", "form_delete_field"]
-evidence = ["crates/ui-egui/tests/prepare.rs::placing_moving_editing_and_deleting_a_field", "crates/engine/src/tests.rs::preparing_a_form_adds_renames_and_deletes_fields"]
-notes = "fields shown with blue fill and name tags; select, move, resize by corners, Delete; field tools return to Select after one field"
+evidence = ["crates/ui-egui/tests/prepare.rs::placing_moving_editing_and_deleting_a_field", "crates/ui-egui/tests/prepare.rs::deleting_several_selected_fields_and_detecting_fields_from_the_panel", "crates/engine/src/tests.rs::preparing_a_form_adds_renames_and_deletes_fields"]
+notes = "fields shown with blue fill and name tags; select, move, resize by corners, Delete (every selected field, one undo step); field tools return to Select after one field. Not yet: editing shared properties of several fields at once"
 
 [[feature]]
 id = "form.add-text-field"
@@ -4688,6 +4688,18 @@ commands = ["form.add.radio"]
 tools = ["form_add_field"]
 evidence = ["crates/forms/src/tests.rs::every_field_type_can_be_added_named_and_drawn", "crates/automation/tests/automation.rs::preparing_a_form_through_tools"]
 notes = "new group Group1… or join the selected group with the next ChoiceN"
+
+[[feature]]
+id = "form.check-box-style"
+title = "Check box and radio button styles"
+area = "F"
+tier = "P1"
+milestone = "M6"
+status = "shipped"
+commands = ["form.field.properties"]
+tools = ["form_set_props", "form_fields"]
+evidence = ["crates/forms/src/tests.rs::check_box_styles_change_the_mark", "crates/ui-egui/tests/prepare.rs::options_tab_sets_the_check_box_style", "crates/automation/tests/automation.rs::preparing_a_form_through_tools"]
+notes = "Field Properties ▸ Options: check, circle, cross, diamond, square, star (/MK /CA, Acrobat's codes), drawn as paths; defaults check (check boxes) and circle (radio buttons)"
 
 [[feature]]
 id = "form.add-dropdown"
@@ -4986,8 +4998,8 @@ milestone = "M6"
 status = "partial"
 commands = ["form.detect", "form.prepare"]
 tools = ["form_detect_fields"]
-evidence = ["crates/forms/src/tests.rs::detection_finds_blanks_rules_boxes_and_names_them", "crates/engine/src/tests.rs::detecting_fields_on_a_printed_form", "crates/automation/tests/automation.rs::detecting_form_fields_through_tools", "crates/ui-egui/tests/javascript.rs::prepare_a_form_detects_fields_on_a_paper_form"]
-notes = "Underscore runs, rules, empty boxes and small squares (check boxes); runs when Prepare a form starts on a document without fields. Not yet: comb boxes, tables of cells, scanned forms (needs OCR first), radio groups."
+evidence = ["crates/forms/src/tests.rs::detection_finds_blanks_rules_boxes_and_names_them", "crates/engine/src/tests.rs::detecting_fields_on_a_printed_form", "crates/automation/tests/automation.rs::detecting_form_fields_through_tools", "crates/ui-egui/tests/javascript.rs::prepare_a_form_detects_fields_on_a_paper_form", "crates/ui-egui/tests/prepare.rs::deleting_several_selected_fields_and_detecting_fields_from_the_panel"]
+notes = "Underscore runs, rules, empty boxes and small squares (check boxes); runs when Prepare a form starts on a document without fields, and from Prepare a form ▸ Detect form fields at any time (existing fields are skipped). Not yet: comb boxes, tables of cells, scanned forms (needs OCR first), radio groups."
 
 [[feature]]
 id = "form.auto-name-fields"
